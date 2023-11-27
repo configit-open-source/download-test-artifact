@@ -1,0 +1,36 @@
+name: "Download test artifacts"
+description: "Download test artifacts"
+inputs:
+  name:
+    required: true
+    description: the compressed test file (without .7z)
+  server:
+    description: WebDAV server URL (root)
+  user:
+    description: webdav user name
+  password:
+    description: webdav password
+  type:
+    description: the type of storage to use
+    required: true
+    # enum: ["GITHUB_ARTIFACTS", "WEBDAV"]
+    
+runs:
+  using: composite
+  steps:
+  # TODO: Handle running on windows
+    - name: WebDAV download
+      # bash should work on windows with git for windows?
+      #if: ${{ vars.TESTBINARIES_STORAGE == "WEBDAV" && runner.os == 'Linux' }}
+      shell: bash
+      run: curl --create-dirs --user ${{ inputs.user }}:${{ inputs.password }} "${{ inputs.server }}/gha/${{ github.run_id }}/${{ inputs.name }}.7z" --output test-artifacts/${{ inputs.name }}.7z
+    # - name: WebDAV download
+    #   if: ${{ vars.TESTBINARIES_STORAGE == "WEBDAV" && runner.os == 'Windows' }}
+    #   shell: pwsh
+    #   run: curl --create-dirs --user ${{ inputs.user }}:${{ inputs.password }} "${{ inputs.server }}/gha/${{ github.run_id }}/${{ inputs.name }}.7z" --output test-artifacts/${{ inputs.name }}.7z      
+    - name: Download test artifact
+      if: ${{ vars.TESTBINARIES_STORAGE == 'GITHUB_ARTIFACTS' }}
+      uses: actions/download-artifact@v3
+      with:
+        name: test-${{ inputs.name }}
+        path: ./test-artifacts
