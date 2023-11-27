@@ -21,7 +21,7 @@ runs:
   # TODO: Handle running on windows
     - name: WebDAV download
       # bash should work on windows with git for windows?
-      #if: ${{ vars.TESTBINARIES_STORAGE == "WEBDAV" && runner.os == 'Linux' }}
+      if: ${{ inputs.type == 'WEBDAV' }}
       shell: bash
       run: curl --create-dirs --user ${{ inputs.user }}:${{ inputs.password }} "${{ inputs.server }}/gha/${{ github.run_id }}/${{ inputs.name }}.7z" --output test-artifacts/${{ inputs.name }}.7z
     # - name: WebDAV download
@@ -29,7 +29,7 @@ runs:
     #   shell: pwsh
     #   run: curl --create-dirs --user ${{ inputs.user }}:${{ inputs.password }} "${{ inputs.server }}/gha/${{ github.run_id }}/${{ inputs.name }}.7z" --output test-artifacts/${{ inputs.name }}.7z      
     - name: Download test artifact
-      if: ${{ vars.TESTBINARIES_STORAGE == 'GITHUB_ARTIFACTS' }}
+      if: ${{ inputs.type == 'GITHUB_ARTIFACTS' }}
       uses: actions/download-artifact@v3
       with:
         name: test-${{ inputs.name }}
