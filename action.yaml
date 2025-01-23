@@ -30,7 +30,7 @@ runs:
     #   run: curl --create-dirs --user ${{ inputs.user }}:${{ inputs.password }} "${{ inputs.server }}/gha/${{ github.run_id }}/${{ inputs.name }}.7z" --output test-artifacts/${{ inputs.name }}.7z      
     - name: Download test artifact
       if: ${{ inputs.type == 'GITHUB_ARTIFACTS' }}
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
         name: test-${{ inputs.name }}
         path: ./test-artifacts
